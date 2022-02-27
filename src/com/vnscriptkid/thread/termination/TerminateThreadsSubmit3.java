@@ -2,10 +2,11 @@ package com.vnscriptkid.thread.termination;
 
 import java.math.BigInteger;
 
-public class TerminateThreadsEx3 {
+public class TerminateThreadsSubmit3 {
     public static void main(String[] args) throws InterruptedException {
-        var blockingTask = new TerminateThreads2.BlockingTask(new BigInteger("22222"), new BigInteger("1000000"));
+        var blockingTask = new TerminateThreads2.BlockingTask(new BigInteger("22222"), new BigInteger("10000009999"));
 
+        blockingTask.setDaemon(true);
         blockingTask.start();
 
         Thread.sleep(2000);
@@ -32,7 +33,7 @@ public class TerminateThreadsEx3 {
 
             for (BigInteger i = BigInteger.ZERO; i.compareTo(power) != 0; i = i.add(BigInteger.ONE)) {
                 if (this.isInterrupted()) {
-                    System.out.println(this.getName() + " got interrupted before reaching to the end.");
+                    System.out.println(this.getName() + " got received interrupt signal from outside.");
                 }
                 result = result.multiply(base);
             }
