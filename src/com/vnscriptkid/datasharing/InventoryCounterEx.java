@@ -1,4 +1,4 @@
-package com.vnscriptkid.stackheap;
+package com.vnscriptkid.datasharing;
 
 public class InventoryCounterEx {
     public static void main(String[] args) throws InterruptedException {
