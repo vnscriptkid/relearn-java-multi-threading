@@ -18,3 +18,16 @@
   - when it happens? when it not happens?
   - ways to fix?
   - data race without race condition? 
+- locking choices:
+  - fine-grained: separate locks for different resources
+    - potential issue: deadlock
+    - pros, cons?
+  - coarse-grained: one lock for different resources
+    - pros, cons?
+
+- 4 conditions of deadlock?
+- Outstanding solution to deadlock? lock resources in the same order 
+- Other solutions?
+  - watchdog
+  - thread interruption ([x] synchronized)
+  - tryLock ([x] synchronized)
