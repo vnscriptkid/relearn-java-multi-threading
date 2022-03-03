@@ -1,6 +1,6 @@
 package com.vnscriptkid.concurrencychallenges;
 
-public class SynchronizationEx {
+public class SynchronizationSubmit {
     public static void main(String[] args) throws InterruptedException {
         var inventoryCounter = new InventoryCounter();
 
@@ -59,16 +59,22 @@ public class SynchronizationEx {
         // todo: achieve same thing with sync block against manually created object
         private int items;
 
+        Object lock = new Object();
+
         public InventoryCounter() {
             this.items = 0;
         }
 
         public void increment() {
-            this.items++;
+            synchronized (lock) {
+                this.items++;
+            }
         }
 
-        public void decrement() {
-            this.items--;
+        public synchronized void decrement() {
+            synchronized (lock) {
+                this.items--;
+            }
         }
 
         public int getItems() {
