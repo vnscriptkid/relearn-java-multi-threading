@@ -5,3 +5,16 @@
   - ref assignments
   - assignments to primitive types except long, double (int, short, byte, float, char, boolean)
   - assignments to long, double (with `volatile`)
+- pros of using `volatile` over `synchronized`?
+  - do not prevent threads from executing concurrently
+- race condition:
+  - what is it?
+  - when it happens?
+  - how to fix?
+- data race:
+  - what is it?
+  - how it is different from race condition?
+  - why it happens?
+  - when it happens? when it not happens?
+  - ways to fix?
+  - data race without race condition? 
