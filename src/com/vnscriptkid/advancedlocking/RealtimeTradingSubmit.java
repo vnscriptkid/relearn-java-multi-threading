@@ -16,11 +16,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
-import java.util.concurrent.locks.Lock;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class RealtimeTradingEx extends Application {
+public class RealtimeTradingSubmit extends Application {
     public static void main(String[] args) {
         launch(args);
     }
@@ -58,12 +59,30 @@ public class RealtimeTradingEx extends Application {
             // this will run on UI thread: use shared resource, update current values to UI
             public void handle(long now) {
                 // todo: lock resource, use kind that allows multiple tries, we don't want to block UI
+                var lockObj = pricesContainer.getLock();
 
-                Label bitcoinLabel = cryptoLabels.get("BTC");
-                bitcoinLabel.setText("");
-                // todo: get each price, conver to string, and feed to setText
+                try {
+                    if (lockObj.tryLock()) {
+                        // todo: get each price, conver to string, and feed to setText
+                        Label bitcoinLabel = cryptoLabels.get("BTC");
+                        bitcoinLabel.setText(Double.toString(pricesContainer.getBitcoinPrice()));
 
-                // todo: unlock resource whatever happens
+                        Label liteCoinLabel = cryptoLabels.get("LTC");
+                        liteCoinLabel.setText(Double.toString(pricesContainer.getLitecoinPrice()));
+
+                        Label etherLabel = cryptoLabels.get("ETH");
+                        etherLabel.setText(Double.toString(pricesContainer.getEtherPrice()));
+
+                        Label rippleLabel = cryptoLabels.get("XRP");
+                        rippleLabel.setText(Double.toString(pricesContainer.getRipplePrice()));
+
+                        Label bitcoinCashLabel = cryptoLabels.get("BCH");
+                        bitcoinCashLabel.setText(Double.toString(pricesContainer.getBitcoinCashPrice()));
+                    }
+                } finally {
+                    // todo: unlock resource whatever happens
+                    lockObj.unlock();
+                }
             }
         };
 
@@ -151,13 +170,57 @@ public class RealtimeTradingEx extends Application {
 
     public static class PricesContainer {
         // todo: create lock of type ReentrantLock
-
+        private ReentrantLock lock = new ReentrantLock();
         private double bitcoinPrice;
         private double etherPrice;
         private double litecoinPrice;
         private double bitcoinCashPrice;
         private double ripplePrice;
+
         // todo: create getters, setters for all objects
+        public ReentrantLock getLock() {
+            return lock;
+        }
+
+        public double getBitcoinPrice() {
+            return bitcoinPrice;
+        }
+
+        public void setBitcoinPrice(double bitcoinPrice) {
+            this.bitcoinPrice = bitcoinPrice;
+        }
+
+        public double getEtherPrice() {
+            return etherPrice;
+        }
+
+        public void setEtherPrice(double etherPrice) {
+            this.etherPrice = etherPrice;
+        }
+
+        public double getLitecoinPrice() {
+            return litecoinPrice;
+        }
+
+        public void setLitecoinPrice(double litecoinPrice) {
+            this.litecoinPrice = litecoinPrice;
+        }
+
+        public double getBitcoinCashPrice() {
+            return bitcoinCashPrice;
+        }
+
+        public void setBitcoinCashPrice(double bitcoinCashPrice) {
+            this.bitcoinCashPrice = bitcoinCashPrice;
+        }
+
+        public double getRipplePrice() {
+            return ripplePrice;
+        }
+
+        public void setRipplePrice(double ripplePrice) {
+            this.ripplePrice = ripplePrice;
+        }
     }
 
     public static class PriceUpdater extends Thread {
@@ -171,18 +234,39 @@ public class RealtimeTradingEx extends Application {
         @Override
         public void run() {
             while (true) {
+                // todo: simulate network of 1 sec
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 // todo: lock shared resource
                 // why? we don't want other threads come in and take partially updated price
+                var lockObj = this.pricesContainer.getLock();
 
+                try {
+                    lockObj.lock();
 
-                // todo: simulate network of 1 sec
+                    // todo: set each price to a random number
+                    pricesContainer.setBitcoinCashPrice(random.nextInt(10000));
+                    pricesContainer.setEtherPrice(random.nextInt(5000));
+                    pricesContainer.setRipplePrice(random.nextDouble(4000));
+                    pricesContainer.setLitecoinPrice(random.nextInt(1000));
+                    pricesContainer.setBitcoinPrice(random.nextInt(7000));
 
-                // todo: set each price to a random number
+                } finally {
+                    // todo: unlock resource whatever happens
+                    lockObj.unlock();
+                }
 
+                try {
+                    // todo: simulate 2 secs processing
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                // todo: unlock resource whatever happens
-
-                // todo: simulate 2 secs processing
             }
         }
     }
